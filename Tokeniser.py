@@ -21,4 +21,4 @@ def get_next_token(markdown):
 
 
 def is_special_char(char):
-    return char in ['_', '*']
+    return char in ['_', '*', '\n']

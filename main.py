@@ -1,3 +1,4 @@
 import Markdown
 
-print Markdown.to_html('__foo__ **bar**')
+with open('text.md') as source:
+    print Markdown.to_html(source.read())
