@@ -2,4 +2,4 @@ __foo__ *bar
 Hello*
 
 Second paragraph
-__**Goodbye**__
+__Goodbye__

@@ -1,3 +1,12 @@
+class Block():
+    def __init__(self, nodes, consumed):
+        self.nodes = nodes
+        self.consumed = consumed
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
 class Node():
     def __init__(self, node_type, value, consumed):
         self.type = node_type
@@ -7,8 +16,18 @@ class Node():
     def __repr__(self):
         return str(self.__dict__)
 
+
+def match_body(tokens):
+    paragraph = match_paragraph(tokens)
+    if paragraph.consumed < len(tokens):
+        return [paragraph] + match_body(tokens[paragraph.consumed:])
+    else:
+        return [paragraph]
+
+
 def match_paragraph(tokens):
-    return match_all_sentences(tokens)
+    sentences = match_all_sentences(tokens)
+    return Block(sentences, sum([node.consumed for node in sentences]) + 2)
 
 
 def match_all_sentences(tokens):
@@ -25,7 +44,7 @@ def match_sentence(tokens):
 
 def match_text_tokens(tokens):
     if len(tokens) is 0:
-        return False
+        return []
 
     token_idx = 0
     text_tokens = []
@@ -34,12 +53,14 @@ def match_text_tokens(tokens):
         return tokens[token_idx].type == 'TEXT'
 
     def is_single_linebreak(tokens, token_idx):
-        return tokens[token_idx].type == 'NEWLINE' and tokens[token_idx+1].type != 'NEWLINE'
+        return (
+            len(tokens) - token_idx > 1 and
+            tokens[token_idx].type == 'NEWLINE' and
+            tokens[token_idx+1].type != 'NEWLINE'
+        )
 
     while token_idx < len(tokens):
-        if is_text(tokens, token_idx):
-            text_tokens.append(tokens[token_idx])
-        elif is_single_linebreak(tokens, token_idx):
+        if is_text(tokens, token_idx) or is_single_linebreak(tokens, token_idx):
             text_tokens.append(tokens[token_idx])
         else:
             break
