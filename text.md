@@ -1,5 +1,5 @@
-__foo__ **bar**
-Hello
+__foo__ *bar
+Hello*
 
 Second paragraph
 __**Goodbye**__
