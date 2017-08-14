@@ -27,8 +27,31 @@ def match_text(tokens):
     if len(tokens) is 0:
         return False
 
-    if tokens[0].type == 'TEXT':
-        return Node('TEXT', tokens[0].value, 1)
+    token_idx = 0
+    text_tokens = []
+
+    def is_text(tokens, token_idx):
+        return tokens[token_idx].type == 'TEXT'
+
+    def is_single_linebreak(tokens, token_idx):
+        return tokens[token_idx].type == 'NEWLINE' and tokens[token_idx+1].type != 'NEWLINE'
+
+    while token_idx < len(tokens):
+        if is_text(tokens, token_idx):
+            text_tokens.append(tokens[token_idx])
+        elif is_single_linebreak(tokens, token_idx):
+            text_tokens.append(tokens[token_idx])
+        else:
+            break
+
+        token_idx += 1
+
+    if len(text_tokens) > 0:
+        return Node(
+            'TEXT',
+            ''.join([token.value for token in text_tokens]),
+            len(text_tokens)
+        )
     else:
         return False
 
@@ -79,6 +102,7 @@ def match_single_set(tokens, match_set):
             return False
 
     return True
+
 
 def match_first(tokens, *matchers):
     for matcher in matchers:
